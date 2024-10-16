@@ -1,8 +1,6 @@
 import os
 import pandas as pd
 
-abspath = os.path.dirname(__file__)
-df = pd.read_csv(os.path.join(abspath,'ncesdata_C29D2A2A.csv'),encoding="cp437")
 
 # 'name' : 'ca district code'
 district_codes = {
@@ -81,7 +79,6 @@ NCES_codes = {
 }
 
 
-
 CAdistrict_codes = dict((v, k) for k, v in NCES_codes.items())
 
 
@@ -92,38 +89,39 @@ def convert_to_NCSE(district_code: str) -> str:
 def convert_to_CAdistrict(NCES_code: str) -> str:
     return CAdistrict_codes.get(NCES_code)
 
+
 # in Aeries
 edcoe_schools = {
-    0:"EDCOE",
-    111:"Blue Ridge Court School",
-    99:"Charter Collge & Career Prep",
-    52:"Charter Connections Academy",
-    51:"Charter Home Study Academy",
-    54:"Charter University Prep",
-    100:"Mountainside Adult Education",
-    150:"Mountainside Middle College High School",
-    101:"Mountainside Success Academy",
-    53:"Rite of Passage Qualifying House",
-    57:"Rite of Passage Sierra Ridge Academy",
-    68:"Special Services",
-    73:"Special Services Adult Transition",
-    72:"Special Services High - UMHS",
-    70:"Special Services High",
-    60:"Special Services Infants & Toddlers",
-    69:"Special Services Middle",
-    1:"Special Services NPS LCI",
-    61:"Special Services Preschool",
+    0: "EDCOE",
+    111: "Blue Ridge Court School",
+    99: "Charter Collge & Career Prep",
+    52: "Charter Connections Academy",
+    51: "Charter Home Study Academy",
+    54: "Charter University Prep",
+    100: "Mountainside Adult Education",
+    150: "Mountainside Middle College High School",
+    101: "Mountainside Success Academy",
+    53: "Rite of Passage Qualifying House",
+    57: "Rite of Passage Sierra Ridge Academy",
+    68: "Special Services",
+    73: "Special Services Adult Transition",
+    72: "Special Services High - UMHS",
+    70: "Special Services High",
+    60: "Special Services Infants & Toddlers",
+    69: "Special Services Middle",
+    1: "Special Services NPS LCI",
+    61: "Special Services Preschool",
 }
 
 # expected schools CBEDS
 edcoe_school_codes = {
-    "0106047":"Blue Ridge",
-    "0930016":"Golden Ridge",
-    "0123521":"Charter Home Study Academy",
-    "0930123":"Mountainside Middle College High School",
-    "0930131":"Rite of Passage",
-    "6069470":"Special Services",
-    "0136036":"John Adams Academy - El Dorado Hills",
+    "0106047": "Blue Ridge",
+    "0930016": "Golden Ridge",
+    "0123521": "Charter Home Study Academy",
+    "0930123": "Mountainside Middle College High School",
+    "0930131": "Rite of Passage",
+    "6069470": "Special Services",
+    "0136036": "John Adams Academy - El Dorado Hills",
 }
 
 
@@ -689,6 +687,58 @@ extractColumns = {
         "Internship-LEASponsoredIndicator",
         "Internship-CertificatedSupervisorIndicator",
     ],
+    "SSID_match": [
+        "Submitted_SENR_ReportingLEA",
+        "Submitted_SENR_SchoolofAttendance",
+        "Selection",
+        "Submitted_SENR_LocalID",
+        "Submitted_SENR_Student_LegalLastName",
+        "Submited_SENR_Student_LegalFirstName",
+        "Submitted_SENR_Student_LegalMiddleName",
+        "Result_SENR_SSID",
+        "Result_SENR_SSIDCreateDate",
+        "Result_MatchCategory",
+        "Result_MatchPercentageScore",
+        "Submitted_SENR_Gender",
+        "Submitted_SENR_BirthDate",
+        "Submitted_SENR_BirthCountry",
+        "Submitted_SENR_BirthState",
+        "Submitted_SENR_GradeLevel",
+        "Result_SENR_ReportingLEAName",
+        "Result_SENR_SchoolofAttendanceName",
+        "Result_SENR_ReportingLEACountyDistrictCode",
+        "Result_SENR_SchoolofAttendanceSchoolCode",
+        "Result_SENR_EnrollmentStartDate",
+        "Result_SENR_EnrollmentExitDate",
+        "Result_SINF_Student_LegalLastName",
+        "Result_SINF_Student_LegalFirstName",
+        "Result_SINF_Student_LegalMiddleName",
+        "Result_SINF_Student_AliasLastName",
+        "Result_SINF_Student_AlieasFirstName",
+        "Result_SINF_Gender",
+        "Result_SENR_BirthDate" "Result_SELA_ELASCode",
+        "Result_SELA_ELASStartDate",
+        "Result_SELA_PrimaryLanguage",
+        "Result_SINF_ParentGuardian1FirstName",
+        "Result_SINF_ParentGuardian1LastName",
+        "Result_SINF_ParentGuardian2FirstName",
+        "Result_SINF_ParentGuardian2LastName",
+        "Result_SINF_ResidentialAddressLine1",
+        "Result_SINF_ResidentialAddressLine2",
+        "Result_SINF_ResidentialAddressCityName",
+        "Result_SINF_ResidentialAddressStateProvinceCode",
+        "Result_SINF_ResidentialAddressZipCode",
+        "Result_SINF_MailingAddressLine1",
+        "Result_SINF_MailingAddressLine2",
+        "Result_SINF_MailingAddressCityName",
+        "Result_SINF_MailingAddressStateProvince",
+        "Result_SINF_MailingAddressZipCode",
+        "Result_SENR_GradeLevel",
+        "Result_SINF_BirthState",
+        "Result_SINF_BirthCity",
+        "Result_SINF_StudentInitialUSSchoolEnrollmentDateK-12",
+        "Result_SWDS_SWDIndicator",
+    ],
 }
 
 
@@ -696,6 +746,33 @@ def get_extract_columns(extract_name: str) -> list:
     return extractColumns.get(extract_name)
 
 
+
+
+
+abspath = os.path.dirname(__file__)
+raw = pd.read_csv(os.path.join(abspath, "ncesdata_C29D2A2A.csv"), encoding="cp437")
+
+def tweak_school_data(df):
+    df.columns = df.columns.str.replace(' ','')
+    df.columns = df.columns.str.replace('*','')
+    df = df.replace("å", None, regex=True)
+    df = df.replace("û", None, regex=True)
+    return (
+        df.assign(StateSchoolID = lambda df_:df_.StateSchoolID.str[-7:],StateDistrictID = lambda df_:df_.StateDistrictID.str[-7:])
+            )
+
+df = tweak_school_data(raw)
+near = df.query('CountyName == "El Dorado County" | CountyName == "Amador County" | CountyName == "Alpine County" | CountyName == "Sacramento County" | CountyName == "Placer County"').reset_index(drop=True)
+near.to_csv('near_counties.csv',index=False)
+
+elDorado = df.query('CountyName == "El Dorado County"').reset_index(drop=True)
+elDorado.to_csv('el_dorado.csv',index=False)
+
+
+
+
+
 if __name__ == "__main__":
-    print(convert_to_NCSE("0961960"))
-    print(get_extract_columns("WBLR"))
+##    print(convert_to_NCSE("0961960"))
+####    print(get_extract_columns("WBLR"))
+    print(elDorado)
